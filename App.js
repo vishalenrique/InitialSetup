@@ -8,6 +8,7 @@
 
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
+import MapView from 'react-native-maps';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -20,22 +21,70 @@ type Props = {};
 export default class App extends Component<Props> {
   render() {
     return (
+      // <View style={styles.container}>
+      //   <Text style={styles.welcome}>Welcome to React Native!!</Text>
+      //   <Text style={styles.instructions}>To get started, edit App.js</Text>
+      //   <Text style={styles.instructions}>{instructions}</Text>
+      // </View>
       <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to React Native!</Text>
-        <Text style={styles.instructions}>To get started, edit App.js</Text>
-        <Text style={styles.instructions}>{instructions}</Text>
+        <MapView 
+           style={styles.map}
+           region = {{
+             latitude:17.4470,
+             longitude:78.3539,
+             latitudeDelta:0.1,
+             longitudeDelta:0.1,
+           }}
+        >
+        <MapView.Marker
+         coordinate={{
+          latitude:17.4470,
+          longitude:78.3539
+         }}
+         title={'my title'}
+         description={'my description'}
+        />
+
+        </MapView>
+        {/* <Text>Hi</Text> */}
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  // container: {
+  //   flex: 1,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   backgroundColor: '#F5FCFF',
+  // },
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
+    position:'absolute',
+    top:0,
+    bottom:0,
+    left:0,
+    right:0,
+   //  justifyContent:'flex-end',
+   //  alignItems:'center'
+   },
+   map: {
+     position:'absolute',
+     top:0,
+     bottom:0,
+     left:0,
+     right:0,
+   },
+  // container: {
+  //   ...StyleSheet.absoluteFillObject,
+  //   height: 400,
+  //   width: 400,
+  //   justifyContent: 'flex-end',
+  //   alignItems: 'center',
+  // },
+  // map: {
+  //   ...StyleSheet.absoluteFillObject,
+  // },
   welcome: {
     fontSize: 20,
     textAlign: 'center',
