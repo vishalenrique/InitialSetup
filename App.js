@@ -7,7 +7,7 @@
  */
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import {Platform, StyleSheet, Text, View, TextInput,TouchableWithoutFeedback} from 'react-native';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -16,14 +16,23 @@ const instructions = Platform.select({
     'Shake or press menu button for dev menu',
 });
 
+
+
 type Props = {};
 export default class App extends Component<Props> {
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to React Native!</Text>
-        <Text style={styles.instructions}>To get started, edit App.js</Text>
-        <Text style={styles.instructions}>{instructions}</Text>
+      <View style={{flex:1}}>
+      <View style={{flex:1,backgroundColor:'#ABCDDA'}}></View>
+      <View style={{ justifyContent: 'flex-start', alignItems: 'flex-end', flexDirection:'row'}}>
+        <TextInput
+        style={{ flex:1, borderColor: 'gray', borderWidth: 1}}
+        onChangeText={(text) => console.log('changed the text')}
+        value='placeholder'/>
+        <TouchableWithoutFeedback onPress={() => console.log('Send button pressed')}>
+        <Text style={{padding:15, borderColor: 'gray', borderWidth: 1 }}>Send</Text>
+        </TouchableWithoutFeedback>
+      </View>
       </View>
     );
   }
