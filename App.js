@@ -20,7 +20,8 @@ export default class App extends Component<Props> {
       response: false,
       counter: 0,
       //endpoint: "http://10.110.232.122:4001"
-      endpoint: "http://10.0.2.2:4001"
+      endpoint: "http://10.0.2.2:4001",
+      messages_array:[]
     };
   }
 
@@ -40,18 +41,38 @@ export default class App extends Component<Props> {
 
     this.socket.on("sendFromServer",data =>{
       console.log("client sendFromServer");
-      this.setState({response:(' Server - '+data)})
+      this.state.messages_array.push(data);
+      this.setState({response:(data)})
     })
   
     });
   }
 
+  loop(){
+    var element = [];
+   for (var index = 0; index < this.state.messages_array.length; index++) {
+
+          element.push(<View key={"container"+index} style={{padding:10}} >
+                          {/* <Text key = {"author"+index}>
+                            {this.state.messages_array[index]}
+                          </Text> */}
+                          <Text key = {index} style={styles.bubble_you} >
+                            {this.state.messages_array[index]}
+                          </Text>
+                      </View>);
+      }
+       return element;
+};
+
+
   render() {
+    myloop = this.loop();
     const { response,counter } = this.state;
     return (
       <View style={{flex:1}}>
       <View style={{flex:1,backgroundColor:'#ABCDDA'}}>
-      { response 
+      {myloop}
+      {/* { response 
       ?
       <Text style={{fontSize:40}}>
         {response}
@@ -60,7 +81,7 @@ export default class App extends Component<Props> {
         <Text>
         default placeholder
       </Text> 
-      }
+      } */}
       </View>
       <View style={{ justifyContent: 'flex-start', alignItems: 'flex-end', flexDirection:'row'}}>
         <TextInput
@@ -69,6 +90,10 @@ export default class App extends Component<Props> {
         />
         <TouchableWithoutFeedback onPress={() => {
           console.log("client send clicked")
+          this.state.messages_array.push(this.state.response);
+          this.setState({
+            counter:0
+          })
           this.socket.emit("Example",this.state.response)}}>
         <Text style={{padding:15, borderColor: 'gray', borderWidth: 1 }}>Send</Text>
         </TouchableWithoutFeedback>
@@ -94,6 +119,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#333333',
     marginBottom: 5,
+  },
+  bubble_you: {
+    color: '#fff',
+    backgroundColor: '#00b0ff',
+  width: '50%',
+  borderRadius: 25,
+  padding: 7,
+  marginBottom: 2,
   },
 });
 
