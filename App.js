@@ -19,19 +19,33 @@ export default class App extends Component<Props> {
     this.state = {
       response: false,
       counter: 0,
-      endpoint: "http://localhost:4001"
+      //endpoint: "http://10.110.232.122:4001"
+      endpoint: "http://10.0.2.2:4001"
     };
   }
 
   componentDidMount() {
     console.log('in componentDidMount');
     const { endpoint } = this.state;
-    const socket = SocketIOClient(endpoint, {
-      transports: ['websocket']
+    this.socket = SocketIOClient(endpoint);
+    this.socket.on("connect",() => {console.log("client connected")
+
+    this.socket.on("disconnect",() => {console.log("client disconnected")})
+
+    this.socket.on("FromAPI", data => {
+      console.log("client FromAPI");
+      // this.setState({ response: data, counter: this.state.counter++ })
     });
-    socket.on("FromAPI", data => this.setState({ response: data, counter: this.state.counter++ }));
-  }
+    //this.socket.on("Example",data => {this.setState({response:data})});
+
+    this.socket.on("sendFromServer",data =>{
+      console.log("client sendFromServer");
+      this.setState({response:(' Server - '+data)})
+    })
   
+    });
+  }
+
   render() {
     const { response,counter } = this.state;
     return (
@@ -39,8 +53,8 @@ export default class App extends Component<Props> {
       <View style={{flex:1,backgroundColor:'#ABCDDA'}}>
       { response 
       ?
-      <Text>
-        the message from server is {counter}
+      <Text style={{fontSize:40}}>
+        {response}
       </Text> 
         :
         <Text>
@@ -51,9 +65,11 @@ export default class App extends Component<Props> {
       <View style={{ justifyContent: 'flex-start', alignItems: 'flex-end', flexDirection:'row'}}>
         <TextInput
         style={{ flex:1, borderColor: 'gray', borderWidth: 1}}
-        onChangeText={(text) => console.log('changed the text')}
-        value='placeholder'/>
-        <TouchableWithoutFeedback onPress={() => console.log("clicked")}>
+        onChangeText={(text) => {this.setState({response:(text)})}}
+        />
+        <TouchableWithoutFeedback onPress={() => {
+          console.log("client send clicked")
+          this.socket.emit("Example",this.state.response)}}>
         <Text style={{padding:15, borderColor: 'gray', borderWidth: 1 }}>Send</Text>
         </TouchableWithoutFeedback>
       </View>

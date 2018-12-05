@@ -12,11 +12,17 @@ var server = http.createServer(app);
 var io = socketIo(server); // < Interesting!
 
 io.on("connection", socket => {
-    console.log("New client connected"), setInterval(() => getApiAndEmit(socket),3000);
+    console.log("New client connected");
+   // setInterval(() => getApiAndEmit(socket),3000);
     socket.on("disconnect", () => console.log("Client disconnected"));
+    socket.on("Example",data => {
+        console.log("Example message received:",data)
+        socket.broadcast.emit("sendFromServer",data)
+    })
   });
 
 var getApiAndEmit = socket => {
+    console.log("getApiAndEMit called")
       socket.emit("FromAPI", 'Message'); // Emitting a new message. It will be consumed by the client
   };
 
