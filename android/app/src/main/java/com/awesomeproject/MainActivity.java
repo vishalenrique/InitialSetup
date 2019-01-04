@@ -1,6 +1,7 @@
 package com.awesomeproject;
 
 import com.facebook.react.ReactActivity;
+import com.rnimmersive.RNImmersiveModule;
 
 public class MainActivity extends ReactActivity {
 
@@ -12,4 +13,12 @@ public class MainActivity extends ReactActivity {
     protected String getMainComponentName() {
         return "AwesomeProject";
     }
+    @Override
+  public void onWindowFocusChanged(boolean hasFocus) {
+    super.onWindowFocusChanged(hasFocus);
+  
+    if (hasFocus && RNImmersiveModule.getInstance() != null) {
+      RNImmersiveModule.getInstance().emitImmersiveStateChangeEvent();
+    }
+  }
 }
