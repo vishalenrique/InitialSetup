@@ -11,29 +11,33 @@ import {Platform, Dimensions, StyleSheet, Text, View, TouchableOpacity, Image, S
 import { RNCamera } from 'react-native-camera';
 import OverlayingImage from './picture.png'
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android:
-    'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
-
-// const screenWidth = Dimensions.get('window').width,
-// const screenHeight = Dimensions.get('window').height
-
 type Props = {};
 export default class App extends Component<Props> {
   constructor(props) {
     super(props)
+    const isPortrait = () => {
+      const dim = Dimensions.get('screen');
+      return dim.height >= dim.width;
+    };
+
+    // Event Listener for orientation changes
+    Dimensions.addEventListener('change', () => {
+      this.setState({
+        orientation: isPortrait() ? 'portrait' : 'landscape'
+      });
+    });
+
     this.state = {
      uris:[],
-     referenceShown:false
+     referenceShown:false,
+     orientation: isPortrait() ? 'portrait' : 'landscape'
     }
     this.timer = null;
     this.getImages = this.getImages.bind(this)
     this.show = this.show.bind(this)
     this.hide = this.hide.bind(this)
   }
+  
 
    async takePicture() {
     if (this.camera) {
@@ -86,13 +90,60 @@ export default class App extends Component<Props> {
 
 
   render() {
-    console.log('ghftybgtbff',this.state.uris);
+    if (this.state.orientation === 'portrait') {
+      return (
+        <View style={{ flex: 1, backgroundColor: 'black' }}>
+        <RNCamera
+          ref={(ref) => { this.camera = ref }}
+          orientation = {'portrait'}
+          style={{ flex: 1}}
+          flashMode={RNCamera.Constants.FlashMode.off}
+          type={RNCamera.Constants.Type.back}
+          permissionDialogTitle={'Permission to use camera'}
+          permissionDialogMessage={'We need your permission to use your camera phone'}
+        >
+        {this.state.referenceShown
+        ?
+        <ImageBackground 
+        style={{ flex:1,
+          opacity:0.8,
+          justifyContent:'flex-end',
+          backgroundColor:'#ffffff'
+        }}  
+        source = {OverlayingImage}  
+        resizeMode = {'contain'}    
+        >
+        </ImageBackground>
+        :
+       <View/>
+        }
+        </RNCamera>
+        <View>
+        <View style = {{backgroundColor:'#000000', alignItems:'center'}}>
+        <TouchableHighlight 
+        onPressIn={this.show} 
+        onPressOut={this.hide}
+        underlayColor= {'#aaaaaa'}
+        style={{ 
+          flex: 0,
+          backgroundColor: '#fff',
+          borderRadius: 5,
+          padding: 15,
+          paddingHorizontal: 20,
+          alignSelf: 'center',
+          margin:10 }}>
+            <Text style={{ fontSize: 14 }}>SNAP</Text>
+        </TouchableHighlight>
+        </View>
+        <View style={{flexDirection:'row'}}>
+        {this.getImages()}
+        </View>
+        </View>
+        </View>
+       );
+    }
+    else {
     return (
-      // <View style={styles.container}>
-      //   <Text style={styles.welcome}>Welcome to React Native!</Text>
-      //   <Text style={styles.instructions}>To get started, edit App.js</Text>
-      //   <Text style={styles.instructions}>{instructions}</Text>
-      // </View>
         <View style={{ flex: 1, flexDirection: 'row', backgroundColor: 'black' }}>
         <RNCamera
           ref={(ref) => { this.camera = ref }}
@@ -104,13 +155,8 @@ export default class App extends Component<Props> {
           permissionDialogTitle={'Permission to use camera'}
           permissionDialogMessage={'We need your permission to use your camera phone'}
         >
-        {/* {this.state.referenceShown ? <View/>:
-        <TouchableOpacity onPressIn={this.show} onPressOut={this.hide} style={{ flex: 0, backgroundColor: '#fff', borderRadius: 5, padding: 15, paddingHorizontal: 20, alignSelf: 'center', margin: 20 }}>
-            <Text style={{ fontSize: 14 }}>SHOW</Text>
-        </TouchableOpacity>
-        } */}
         {this.state.referenceShown
-        ? // referenceShown ? ShowOverlat and remove button , SHow Button
+        ?
         <ImageBackground 
         style={{ flex:1,
           opacity:0.8,
@@ -120,23 +166,10 @@ export default class App extends Component<Props> {
         source = {OverlayingImage}  
         resizeMode = {'contain'}    
         >
-        {/* <View style={{flexDirection:'row', alignSelf:'center'}}>
-        <TouchableOpacity onPress={this.takePicture.bind(this)} style={{ flex: 0, backgroundColor: '#fff', borderRadius: 5, padding: 15, paddingHorizontal: 20, alignSelf: 'center', margin: 20 }}>
-            <Text style={{ fontSize: 14 }}> SNAP PLEASE!</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={this.hide} style={{ flex: 0, backgroundColor: '#fff', borderRadius: 5, padding: 15, paddingHorizontal: 20, alignSelf: 'center', margin: 20 }}>
-            <Text style={{ fontSize: 14 }}>HIDE</Text>
-          </TouchableOpacity>
-        </View> */}
         </ImageBackground>
         :
        <View/>
         }
-         {/* <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center', backgroundColor:'#DBDBDA' }}> */}
-          {/* <TouchableOpacity onPress={this.takePicture.bind(this)} style={{ flex: 0, backgroundColor: '#fff', borderRadius: 5, padding: 15, paddingHorizontal: 20, alignSelf: 'center', margin: 20 }}>
-            <Text style={{ fontSize: 14 }}> SNAP PLEASE!</Text>
-          </TouchableOpacity> */}
-        {/* </View> */}
         </RNCamera>
         <View style={{flexDirection:'row'}}>
         <View style = {{backgroundColor:'#000000', justifyContent:'center'}}>
@@ -154,44 +187,13 @@ export default class App extends Component<Props> {
           margin:10 }}>
             <Text style={{ fontSize: 14 }}>SNAP</Text>
         </TouchableHighlight>
-        {/* <TouchableOpacity onPress={this.takePicture.bind(this)} style={{ flex: 0, backgroundColor: '#fff', borderRadius: 5, padding: 15, paddingHorizontal: 20, alignSelf: 'center' }}>
-            <Text style={{ fontSize: 14 }}> SNAP PLEASE!</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={this.hide} style={{ flex: 0, backgroundColor: '#fff', borderRadius: 5, padding: 15, paddingHorizontal: 20, alignSelf: 'center' }}>
-            <Text style={{ fontSize: 14 }}>HIDE</Text>
-        </TouchableOpacity> */}
         </View>
         <View>
         {this.getImages()}
         </View>
         </View>
-        {/* <ScrollView 
-        horizontal> */}
-        {/* {this.state.referenceShown ? */}
-        {/* :
-        <View/>
-        } */}
-        {/* </ScrollView> */}
         </View>
     );
   }
+  }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
