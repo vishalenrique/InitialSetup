@@ -8,6 +8,7 @@
 
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
+import DateTimePicker from 'react-native-modal-datetime-picker';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -20,11 +21,29 @@ type Props = {};
 export default class App extends Component<Props> {
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to React Native!</Text>
-        <Text style={styles.instructions}>To get started, edit App.js</Text>
-        <Text style={styles.instructions}>{instructions}</Text>
-      </View>
+      // <View style={styles.container}>
+      //   <Text style={styles.welcome}>Welcome to React Native!</Text>
+      //   <Text style={styles.instructions}>To get started, edit App.js</Text>
+      //   <Text style={styles.instructions}>{instructions}</Text>
+      // </View>
+      <View style={{ flex: 1 }}>
+      <DateTimePicker
+      mode='datetime'
+      isVisible
+      onConfirm = {(date) => { 
+        // console.log('safadcedcasc', date.toDateString(), date.toLocaleDateString(), date.toLocaleTimeString(), date.toTimeString())
+        const h = date.getHours()
+        const m = date.getMinutes()
+        const timeFormat = h>12?'AM':'PM'
+        const currentTime = h%12 + ':' + m + timeFormat
+        console.log('safadcedcasc',  date.toDateString(), currentTime)
+        
+       }
+      }
+      onCancel = {() => { console.log('safadcedcasc', 'cancel')} }
+      is24Hour = {false}
+      />
+    </View>
     );
   }
 }
